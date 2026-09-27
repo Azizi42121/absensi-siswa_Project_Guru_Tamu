@@ -1,35 +1,35 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
-<div class="flex-1 flex">
+<div class="flex-1 flex flex-col lg:flex-row">
   <%- include('../partials/sidebar') %>
 
-  <main class="flex-1 p-8 space-y-8">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-full overflow-hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
       <div>
-        <h1 class="text-2xl font-bold text-slate-800">Log Audit Pengisian Presensi Guru</h1>
+        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Log Audit Pengisian Presensi Guru</h1>
         <p class="text-xs text-slate-500 mt-1">Rekam jejak digital pengisian presensi siswa & jurnal materi oleh guru mapel</p>
       </div>
     </div>
 
     <!-- Audit Log Table -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
-        <span class="font-bold text-slate-800">Histori Audit Transaksi Presensi (<%= auditLogs.length %> Record)</span>
-        <span class="text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full font-semibold">
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <span class="font-bold text-slate-900">Histori Audit Transaksi Presensi (<%= auditLogs.length %> Record)</span>
+        <span class="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-3 py-1 rounded-full font-bold w-fit">
           <i class="fa-solid fa-lock text-[10px] mr-1"></i> Data Tamper-Proof Log
         </span>
       </div>
 
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm text-slate-600">
-          <thead class="bg-slate-50 text-xs uppercase text-slate-400 font-semibold border-b border-slate-100">
+          <thead class="bg-slate-50 text-xs uppercase text-slate-400 font-bold border-b border-slate-100">
             <tr>
-              <th class="px-6 py-3.5">Tanggal & Jam</th>
-              <th class="px-6 py-3.5">Guru Pengajar</th>
-              <th class="px-6 py-3.5">Kelas & Mapel</th>
-              <th class="px-6 py-3.5">Materi & Agenda Kelas</th>
-              <th class="px-6 py-3.5 text-center">Rekap Status Siswa</th>
+              <th class="px-6 py-3.5 whitespace-nowrap">Tanggal & Jam</th>
+              <th class="px-6 py-3.5 whitespace-nowrap">Guru Pengajar</th>
+              <th class="px-6 py-3.5 whitespace-nowrap">Kelas & Mapel</th>
+              <th class="px-6 py-3.5 whitespace-nowrap">Materi & Agenda Kelas</th>
+              <th class="px-6 py-3.5 text-center whitespace-nowrap">Rekap Status Siswa</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
@@ -39,32 +39,32 @@
             <% auditLogs.forEach(log => { %>
             <tr class="hover:bg-slate-50/80 transition">
               <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 font-medium">
-                <div class="font-bold text-slate-700">
-                  <%= new Date(log.tanggal).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }) %>
+                <div class="font-bold text-slate-900">
+                  <%= new Date(log.tanggal).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) %>
                 </div>
-                <div class="text-[11px] text-slate-400"><%= log.jamKe %></div>
+                <div class="text-[11px] font-mono text-slate-400"><%= log.jamKe %></div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap font-semibold text-slate-800">
+              <td class="px-6 py-4 whitespace-nowrap font-bold text-slate-800">
                 <i class="fa-solid fa-user-check text-indigo-500 mr-1.5"></i> <%= log.teacherName %>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 mr-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/60 mr-2">
                   <%= log.className %>
                 </span>
-                <span class="text-xs text-slate-600"><%= log.subjectName %></span>
+                <span class="text-xs text-slate-700 font-medium"><%= log.subjectName %></span>
               </td>
               <td class="px-6 py-4">
-                <div class="font-medium text-slate-800"><%= log.materiAjar %></div>
+                <div class="font-semibold text-slate-800"><%= log.materiAjar %></div>
                 <% if (log.catatanKelas) { %>
                 <div class="text-xs text-slate-500 italic mt-0.5">Catatan: "<%= log.catatanKelas %>"</div>
                 <% } %>
               </td>
               <td class="px-6 py-4 text-center whitespace-nowrap">
-                <div class="inline-flex items-center space-x-1 text-xs">
-                  <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold" title="Hadir"><%= log.recap.hadir %> H</span>
-                  <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-semibold" title="Sakit"><%= log.recap.sakit %> S</span>
-                  <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-semibold" title="Izin"><%= log.recap.izin %> I</span>
-                  <span class="px-2 py-0.5 bg-rose-100 text-rose-800 rounded font-semibold" title="Alpa"><%= log.recap.alpa %> A</span>
+                <div class="inline-flex items-center space-x-1.5 text-xs">
+                  <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg font-bold" title="Hadir"><%= log.recap.hadir %> H</span>
+                  <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg font-bold" title="Sakit"><%= log.recap.sakit %> S</span>
+                  <span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-lg font-bold" title="Izin"><%= log.recap.izin %> I</span>
+                  <span class="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-lg font-bold" title="Alpa"><%= log.recap.alpa %> A</span>
                 </div>
               </td>
             </tr>

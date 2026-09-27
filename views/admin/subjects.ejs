@@ -1,52 +1,52 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
-<div class="flex-1 flex">
+<div class="flex-1 flex flex-col lg:flex-row">
   <%- include('../partials/sidebar') %>
 
-  <main class="flex-1 p-8 space-y-8">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-full overflow-hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
       <div>
-        <h1 class="text-2xl font-bold text-slate-800">Manajemen Data Mata Pelajaran</h1>
+        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Data Mata Pelajaran</h1>
         <p class="text-xs text-slate-500 mt-1">Kelola daftar kurikulum mata pelajaran sekolah</p>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
       <!-- Form Create Subject -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-fit">
-        <h2 class="text-base font-bold text-slate-800 mb-4 flex items-center">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs h-fit">
+        <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center">
           <i class="fa-solid fa-plus-circle text-indigo-600 mr-2"></i> Tambah Mapel Baru
         </h2>
         <form action="/admin/subjects" method="POST" class="space-y-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Kode Mapel</label>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Kode Mapel</label>
             <input type="text" name="kodeMapel" placeholder="misal: PWPB-01" required
-              class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nama Mata Pelajaran</label>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Nama Mata Pelajaran</label>
             <input type="text" name="namaMapel" placeholder="misal: Pemrograman Web" required
-              class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
           </div>
-          <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition">
-            Simpan Mapel
+          <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition shadow-md">
+            <i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Mapel
           </button>
         </form>
       </div>
 
       <!-- Subject Table -->
-      <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-5 border-b border-slate-100 font-bold text-slate-800">
-          Daftar Mata Pelajaran (<%= subjects.length %>)
+      <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div class="p-5 border-b border-slate-100 font-bold text-slate-900 flex items-center justify-between">
+          <span>Daftar Mata Pelajaran (<%= subjects.length %>)</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm text-slate-600">
-            <thead class="bg-slate-50 text-xs uppercase text-slate-400 font-semibold border-b border-slate-100">
+            <thead class="bg-slate-50 text-xs uppercase text-slate-400 font-bold border-b border-slate-100">
               <tr>
-                <th class="px-6 py-3">Kode Mapel</th>
-                <th class="px-6 py-3">Nama Mata Pelajaran</th>
-                <th class="px-6 py-3 text-right">Aksi</th>
+                <th class="px-6 py-3.5 whitespace-nowrap">Kode Mapel</th>
+                <th class="px-6 py-3.5 whitespace-nowrap">Nama Mata Pelajaran</th>
+                <th class="px-6 py-3.5 text-right whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -54,12 +54,12 @@
               <tr><td colspan="3" class="px-6 py-6 text-center text-xs text-slate-400">Belum ada data mata pelajaran.</td></tr>
               <% } %>
               <% subjects.forEach(s => { %>
-              <tr class="hover:bg-slate-50">
-                <td class="px-6 py-3.5 font-mono text-xs font-bold text-indigo-600"><%= s.kodeMapel %></td>
-                <td class="px-6 py-3.5 font-semibold text-slate-800"><%= s.namaMapel %></td>
-                <td class="px-6 py-3.5 text-right">
+              <tr class="hover:bg-slate-50/80 transition">
+                <td class="px-6 py-4 font-mono text-xs font-bold text-indigo-600 whitespace-nowrap"><%= s.kodeMapel %></td>
+                <td class="px-6 py-4 font-bold text-slate-900 whitespace-nowrap"><%= s.namaMapel %></td>
+                <td class="px-6 py-4 text-right whitespace-nowrap">
                   <form action="/admin/subjects/delete/<%= s.id %>" method="POST" onsubmit="return confirm('Hapus mata pelajaran ini?');">
-                    <button type="submit" class="text-rose-600 hover:text-rose-800 font-medium text-xs">
+                    <button type="submit" class="inline-flex items-center text-rose-600 hover:text-rose-800 font-bold text-xs bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-lg transition border border-rose-200/60">
                       <i class="fa-solid fa-trash mr-1"></i> Hapus
                     </button>
                   </form>

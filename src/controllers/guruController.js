@@ -46,13 +46,30 @@ exports.getDashboard = async (req, res) => {
   }
 };
 
+// Helpers for consistent local date handling without timezone offset shifts
+function parseLocalDate(dateStr) {
+  if (!dateStr) {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day, 0, 0, 0, 0);
+}
+
+function formatLocalDate(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 // 2. Form Input Presensi & Jurnal Materi per Schedule
 exports.getAttendanceInput = async (req, res) => {
   try {
     const { scheduleId } = req.params;
     const teacherId = req.session.user.id;
-    const queryDate = req.query.tanggal ? new Date(req.query.tanggal) : new Date();
-    queryDate.setHours(0, 0, 0, 0);
+    const queryDate = parseLocalDate(req.query.tanggal);
 
     const schedule = await prisma.schedule.findFirst({
       where: { id: parseInt(scheduleId), teacherId },
@@ -107,7 +124,8 @@ exports.getAttendanceInput = async (req, res) => {
       students,
       attendanceMap,
       existingJournal,
-      selectedDate: queryDate.toISOString().split('T')[0],
+      selectedDate: formatLocalDate(queryDate),
+      success: req.query.success === '1',
     });
   } catch (err) {
     console.error('Get Attendance Input Error:', err);
@@ -122,8 +140,8 @@ exports.postAttendanceInput = async (req, res) => {
     const { tanggal, materiAjar, catatanKelas, attendanceData } = req.body;
     const teacherId = req.session.user.id;
 
-    const targetDate = new Date(tanggal);
-    targetDate.setHours(0, 0, 0, 0);
+    const targetDate = parseLocalDate(tanggal);
+    const formattedDate = formatLocalDate(targetDate);
 
     const schedule = await prisma.schedule.findFirst({
       where: { id: parseInt(scheduleId), teacherId },
@@ -135,6 +153,9 @@ exports.postAttendanceInput = async (req, res) => {
 
     const endOfDay = new Date(targetDate);
     endOfDay.setDate(targetDate.getDate() + 1);
+
+    const safeMateriAjar = (materiAjar && materiAjar.trim()) ? materiAjar.trim() : 'Materi Pelajaran Hari Ini';
+    const safeCatatanKelas = (catatanKelas && catatanKelas.trim()) ? catatanKelas.trim() : null;
 
     // Save or update Teaching Journal
     const existingJournal = await prisma.teachingJournal.findFirst({
@@ -150,24 +171,38 @@ exports.postAttendanceInput = async (req, res) => {
     if (existingJournal) {
       await prisma.teachingJournal.update({
         where: { id: existingJournal.id },
-        data: { materiAjar, catatanKelas },
+        data: {
+          materiAjar: safeMateriAjar,
+          catatanKelas: safeCatatanKelas,
+        },
       });
     } else {
       await prisma.teachingJournal.create({
         data: {
           scheduleId: schedule.id,
           tanggal: targetDate,
-          materiAjar,
-          catatanKelas,
+          materiAjar: safeMateriAjar,
+          catatanKelas: safeCatatanKelas,
         },
       });
     }
 
     // Save or update attendance per student
-    // attendanceData is object format: { "studentId_1": "HADIR", "studentId_2": "SAKIT", ... }
     if (attendanceData && typeof attendanceData === 'object') {
-      for (const [studentIdStr, status] of Object.entries(attendanceData)) {
+      const classStudents = await prisma.user.findMany({
+        where: { role: 'SISWA', classId: schedule.classId },
+        select: { id: true },
+      });
+      const validStudentIds = new Set(classStudents.map((s) => s.id));
+      const allowedStatuses = ['HADIR', 'SAKIT', 'IZIN', 'ALPA'];
+
+      for (const [studentIdStr, statusRaw] of Object.entries(attendanceData)) {
         const studentId = parseInt(studentIdStr);
+        if (isNaN(studentId) || !validStudentIds.has(studentId)) {
+          continue;
+        }
+
+        const status = allowedStatuses.includes(statusRaw) ? statusRaw : 'HADIR';
 
         const existingAtt = await prisma.attendance.findFirst({
           where: {
@@ -202,7 +237,7 @@ exports.postAttendanceInput = async (req, res) => {
       }
     }
 
-    res.redirect(`/guru/attendance/${schedule.id}?tanggal=${tanggal}&success=1`);
+    res.redirect(`/guru/attendance/${schedule.id}?tanggal=${formattedDate}&success=1`);
   } catch (err) {
     console.error('Post Attendance Error:', err);
     res.status(500).send('Server Error');

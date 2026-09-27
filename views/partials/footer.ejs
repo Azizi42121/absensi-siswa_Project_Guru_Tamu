@@ -1,8 +1,51 @@
-<footer class="no-print bg-white border-t border-slate-200 mt-auto py-4 px-6 text-center text-xs text-slate-500">
-  <div class="flex flex-col sm:flex-row justify-between items-center max-w-7xl mx-auto space-y-2 sm:space-y-0">
-    <p>&copy; 2026 Sistem Manajemen Absensi Siswa & Guru (PresensiEdu). Hak Cipta Dilindungi.</p>
-    <p class="font-medium text-slate-600"><i class="fa-solid fa-code text-indigo-500 mr-1"></i> Express.js • Prisma SQLite • EJS Tailwind</p>
+<footer class="no-print border-t border-slate-200/80 bg-white py-4 px-6 text-center text-xs text-slate-500 mt-auto">
+  <div class="flex flex-col sm:flex-row items-center justify-between gap-2 max-w-7xl mx-auto">
+    <p>&copy; <%= new Date().getFullYear() %> <strong class="text-slate-700">PresensiEdu</strong> - Sistem Absensi Siswa & Jurnal Mengajar Guru.</p>
+    <p class="text-[11px] text-slate-400">Standardized RBAC 3-Level • SQLite Prisma Express</p>
   </div>
 </footer>
+
+<!-- Mobile Sidebar Interactivity Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebarClose = document.getElementById('sidebar-close');
+    const sidebarDrawer = document.getElementById('sidebar-drawer');
+    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+    function openSidebar() {
+      if (sidebarDrawer && sidebarBackdrop) {
+        sidebarDrawer.classList.remove('-translate-x-full');
+        sidebarBackdrop.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeSidebar() {
+      if (sidebarDrawer && sidebarBackdrop) {
+        sidebarDrawer.classList.add('-translate-x-full');
+        sidebarBackdrop.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    }
+
+    if (sidebarToggle) sidebarToggle.addEventListener('click', openSidebar);
+    if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+    if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeSidebar);
+
+    // Close sidebar on ESC key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeSidebar();
+    });
+
+    // Reset drawer state on window resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024) {
+        closeSidebar();
+      }
+    });
+  });
+</script>
+
 </body>
 </html>

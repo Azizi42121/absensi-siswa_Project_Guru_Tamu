@@ -1,16 +1,16 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
-<div class="flex-1 flex">
+<div class="flex-1 flex flex-col lg:flex-row">
   <%- include('../partials/sidebar') %>
-  <main class="flex-1 p-8 flex items-center justify-center">
-    <div class="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-sm">
-      <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+  <main class="flex-1 p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
+    <div class="max-w-md w-full bg-white border border-slate-200/80 rounded-3xl p-8 text-center shadow-xs hover-lift">
+      <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl font-extrabold shadow-xs">
         403
       </div>
-      <h2 class="text-xl font-bold text-slate-800 mb-2">Akses Ditolak (Forbidden)</h2>
-      <p class="text-sm text-slate-600 mb-6"><%= message || 'Anda tidak memiliki hak akses untuk membuka halaman ini.' %></p>
-      <a href="/" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-lg transition">
+      <h2 class="text-xl font-extrabold text-slate-900 mb-2">Akses Ditolak (Forbidden)</h2>
+      <p class="text-xs text-slate-500 mb-6 font-medium"><%= message || 'Anda tidak memiliki hak akses untuk membuka halaman ini.' %></p>
+      <a href="/" class="inline-flex items-center px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-md">
         <i class="fa-solid fa-arrow-left mr-2"></i> Kembali ke Dashboard Utama
       </a>
     </div>

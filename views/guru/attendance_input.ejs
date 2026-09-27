@@ -1,74 +1,84 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
-<div class="flex-1 flex">
+<div class="flex-1 flex flex-col lg:flex-row">
   <%- include('../partials/sidebar') %>
 
-  <main class="flex-1 p-8 space-y-8">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-full overflow-hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
       <div>
-        <h1 class="text-2xl font-bold text-slate-800">Presensi Siswa per Sesi Mengajar</h1>
+        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Presensi Siswa per Sesi Mengajar</h1>
         <p class="text-xs text-slate-500 mt-1">
-          Kelas: <span class="font-bold text-slate-700"><%= schedule.class.namaKelas %></span> | 
-          Mapel: <span class="font-bold text-slate-700"><%= schedule.subject.namaMapel %></span> | 
-          Jadwal: <span class="font-bold text-slate-700"><%= schedule.hari %>, <%= schedule.jamKe %></span>
+          Kelas: <span class="font-bold text-slate-800"><%= schedule.class.namaKelas %></span> | 
+          Mapel: <span class="font-bold text-slate-800"><%= schedule.subject.namaMapel %></span> | 
+          Jadwal: <span class="font-bold text-slate-800"><%= schedule.hari %>, <%= schedule.jamKe %></span>
         </p>
       </div>
 
       <div class="flex items-center space-x-3">
         <form action="/guru/attendance/<%= schedule.id %>" method="GET" class="flex items-center space-x-2">
           <input type="date" name="tanggal" value="<%= selectedDate %>" onchange="this.form.submit()"
-            class="px-3.5 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+            class="px-3.5 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
         </form>
-        <a href="/guru/dashboard" class="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl transition">
+        <a href="/guru/dashboard" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition border border-slate-200">
           <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
         </a>
       </div>
     </div>
 
+    <% if (typeof success !== 'undefined' && success) { %>
+    <div class="p-4 bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs rounded-2xl flex items-center space-x-3">
+      <i class="fa-solid fa-circle-check text-xl text-emerald-600"></i>
+      <div>
+        <h4 class="font-extrabold text-sm">Presensi & Jurnal Mengajar Berhasil Disimpan!</h4>
+        <p class="mt-0.5 font-medium">Data presensi siswa dan jurnal kelas telah berhasil diperbarui.</p>
+      </div>
+    </div>
+    <% } %>
+
     <!-- Attendance Form -->
-    <form action="/guru/attendance/<%= schedule.id %>" method="POST" class="space-y-8">
+    <form action="/guru/attendance/<%= schedule.id %>" method="POST" class="space-y-6 sm:space-y-8">
       <input type="hidden" name="tanggal" value="<%= selectedDate %>">
 
       <!-- Teaching Journal Section -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <h2 class="text-base font-bold text-slate-800 flex items-center">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+        <h2 class="text-base font-bold text-slate-900 flex items-center">
           <i class="fa-solid fa-book-journal-whills text-indigo-600 mr-2"></i> Jurnal Materi Pelajaran & Agenda Kelas
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Materi Pelajaran / Standar Kompetensi *</label>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Materi Pelajaran / Standar Kompetensi *</label>
             <input type="text" name="materiAjar" required value="<%= existingJournal ? existingJournal.materiAjar : '' %>"
               placeholder="misal: Pembuatan REST API dengan Express.js & SQLite"
-              class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Catatan Kejadian / Agenda Kelas</label>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Catatan Kejadian / Agenda Kelas</label>
             <input type="text" name="catatanKelas" value="<%= existingJournal ? (existingJournal.catatanKelas || '') : '' %>"
-              placeholder="misal: Kelas berlangsung tertib, 2 siswa belum mengumpulkan tugas minggu lalu."
-              class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              placeholder="misal: Kelas berlangsung tertib, 2 siswa belum mengumpulkan tugas."
+              class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
           </div>
         </div>
       </div>
 
       <!-- Student Attendance Table -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="font-bold text-slate-800">Daftar Presensi Siswa (<%= students.length %> Siswa)</h2>
-          <div class="text-xs text-slate-500">
-            Pilih status: <span class="font-semibold text-emerald-600">H = Hadir</span>, <span class="font-semibold text-amber-600">S = Sakit</span>, <span class="font-semibold text-blue-600">I = Izin</span>, <span class="font-semibold text-rose-600">A = Alpa</span>
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h2 class="font-bold text-slate-900">Daftar Presensi Siswa (<%= students.length %> Siswa)</h2>
+          <div class="text-xs text-slate-500 font-medium">
+            Status: <span class="font-bold text-emerald-600">H = Hadir</span>, <span class="font-bold text-amber-600">S = Sakit</span>, <span class="font-bold text-blue-600">I = Izin</span>, <span class="font-bold text-rose-600">A = Alpa</span>
           </div>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm text-slate-600">
-            <thead class="bg-slate-50 text-xs uppercase text-slate-400 font-semibold border-b border-slate-100">
+            <thead class="bg-slate-50 text-xs uppercase text-slate-400 font-bold border-b border-slate-100">
               <tr>
-                <th class="px-6 py-3.5">No</th>
-                <th class="px-6 py-3.5">Nama Siswa</th>
-                <th class="px-6 py-3.5">NISN</th>
-                <th class="px-6 py-3.5 text-center">Status Presensi</th>
-                <th class="px-6 py-3.5">Surat Dokter / Izin</th>
+                <th class="px-6 py-3.5 whitespace-nowrap">No</th>
+                <th class="px-6 py-3.5 whitespace-nowrap">Nama Siswa</th>
+                <th class="px-6 py-3.5 whitespace-nowrap">NISN</th>
+                <th class="px-6 py-3.5 text-center whitespace-nowrap">Status Presensi</th>
+                <th class="px-6 py-3.5 whitespace-nowrap">Surat Dokter / Izin</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -79,30 +89,34 @@
                 const currentAtt = attendanceMap[st.id];
                 const currentStatus = currentAtt ? currentAtt.status : 'HADIR';
               %>
-              <tr class="hover:bg-slate-50">
-                <td class="px-6 py-4 text-xs font-semibold text-slate-400"><%= index + 1 %></td>
-                <td class="px-6 py-4 font-bold text-slate-800"><%= st.nama %></td>
-                <td class="px-6 py-4 text-xs font-mono text-slate-500"><%= st.nisn || '-' %></td>
-                <td class="px-6 py-4 text-center">
-                  <div class="inline-flex items-center space-x-3 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-                    <label class="cursor-pointer px-2.5 py-1 rounded-lg text-xs font-bold transition <%= currentStatus === 'HADIR' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-200' %>">
-                      <input type="radio" name="attendanceData[<%= st.id %>]" value="HADIR" <%= currentStatus === 'HADIR' ? 'checked' : '' %> class="sr-only"> Hadir
+              <tr class="hover:bg-slate-50/80 transition">
+                <td class="px-6 py-4 text-xs font-bold text-slate-400 whitespace-nowrap"><%= index + 1 %></td>
+                <td class="px-6 py-4 font-bold text-slate-900 whitespace-nowrap"><%= st.nama %></td>
+                <td class="px-6 py-4 text-xs font-mono text-slate-500 whitespace-nowrap"><%= st.nisn || '-' %></td>
+                <td class="px-6 py-4 text-center whitespace-nowrap">
+                  <div class="inline-flex items-center space-x-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                    <label class="cursor-pointer">
+                      <input type="radio" name="attendanceData[<%= st.id %>]" value="HADIR" <%= currentStatus === 'HADIR' ? 'checked' : '' %> class="peer sr-only">
+                      <span class="px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-600 hover:bg-slate-200 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:shadow-xs inline-block">Hadir</span>
                     </label>
-                    <label class="cursor-pointer px-2.5 py-1 rounded-lg text-xs font-bold transition <%= currentStatus === 'SAKIT' ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-200' %>">
-                      <input type="radio" name="attendanceData[<%= st.id %>]" value="SAKIT" <%= currentStatus === 'SAKIT' ? 'checked' : '' %> class="sr-only"> Sakit
+                    <label class="cursor-pointer">
+                      <input type="radio" name="attendanceData[<%= st.id %>]" value="SAKIT" <%= currentStatus === 'SAKIT' ? 'checked' : '' %> class="peer sr-only">
+                      <span class="px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-600 hover:bg-slate-200 peer-checked:bg-amber-500 peer-checked:text-white peer-checked:shadow-xs inline-block">Sakit</span>
                     </label>
-                    <label class="cursor-pointer px-2.5 py-1 rounded-lg text-xs font-bold transition <%= currentStatus === 'IZIN' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-200' %>">
-                      <input type="radio" name="attendanceData[<%= st.id %>]" value="IZIN" <%= currentStatus === 'IZIN' ? 'checked' : '' %> class="sr-only"> Izin
+                    <label class="cursor-pointer">
+                      <input type="radio" name="attendanceData[<%= st.id %>]" value="IZIN" <%= currentStatus === 'IZIN' ? 'checked' : '' %> class="peer sr-only">
+                      <span class="px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-600 hover:bg-slate-200 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:shadow-xs inline-block">Izin</span>
                     </label>
-                    <label class="cursor-pointer px-2.5 py-1 rounded-lg text-xs font-bold transition <%= currentStatus === 'ALPA' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-200' %>">
-                      <input type="radio" name="attendanceData[<%= st.id %>]" value="ALPA" <%= currentStatus === 'ALPA' ? 'checked' : '' %> class="sr-only"> Alpa
+                    <label class="cursor-pointer">
+                      <input type="radio" name="attendanceData[<%= st.id %>]" value="ALPA" <%= currentStatus === 'ALPA' ? 'checked' : '' %> class="peer sr-only">
+                      <span class="px-2.5 py-1 rounded-lg text-xs font-bold transition text-slate-600 hover:bg-slate-200 peer-checked:bg-rose-600 peer-checked:text-white peer-checked:shadow-xs inline-block">Alpa</span>
                     </label>
                   </div>
                 </td>
-                <td class="px-6 py-4 text-xs">
+                <td class="px-6 py-4 text-xs whitespace-nowrap">
                   <% if (currentAtt && currentAtt.suratBuktiUrl) { %>
-                    <a href="<%= currentAtt.suratBuktiUrl %>" target="_blank" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-semibold underline">
-                      <i class="fa-solid fa-paperclip mr-1"></i> Lihat Surat
+                    <a href="<%= currentAtt.suratBuktiUrl %>" target="_blank" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-bold underline">
+                      <i class="fa-solid fa-paperclip mr-1 text-indigo-500"></i> Lihat Surat
                     </a>
                     <% if (currentAtt.verifiedByTeacher) { %>
                       <span class="ml-2 text-emerald-600 font-bold">(Terverifikasi)</span>

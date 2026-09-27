@@ -152,8 +152,14 @@ exports.postUploadNote = async (req, res) => {
     }
 
     const fileUrl = `/uploads/${req.file.filename}`;
-    const targetDate = new Date(tanggal);
-    targetDate.setHours(0, 0, 0, 0);
+    let targetDate;
+    if (tanggal) {
+      const [year, month, day] = tanggal.split('-').map(Number);
+      targetDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+    } else {
+      targetDate = new Date();
+      targetDate.setHours(0, 0, 0, 0);
+    }
 
     const endOfDay = new Date(targetDate);
     endOfDay.setDate(targetDate.getDate() + 1);

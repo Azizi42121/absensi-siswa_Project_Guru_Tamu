@@ -1,21 +1,21 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
-<div class="flex-1 flex">
+<div class="flex-1 flex flex-col lg:flex-row">
   <%- include('../partials/sidebar') %>
 
-  <main class="flex-1 p-8 space-y-8 print-container">
+  <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-full overflow-hidden print-container">
     <!-- Filter Header (Hidden in Print) -->
-    <div class="no-print flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+    <div class="no-print flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
       <div>
-        <h1 class="text-2xl font-bold text-slate-800">Cetak Rekapitulasi Presensi Bulanan</h1>
+        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Cetak Rekapitulasi Presensi Bulanan</h1>
         <p class="text-xs text-slate-500 mt-1">Laporan rekapitulasi kehadiran resmi siswa per mata pelajaran & rombongan belajar</p>
       </div>
 
       <form action="/guru/monthly-recap" method="GET" class="flex flex-wrap items-center gap-3">
         <div>
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Jadwal Kelas</label>
-          <select name="scheduleId" class="px-3.5 py-2 border border-slate-300 rounded-xl text-xs font-semibold bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Jadwal Kelas</label>
+          <select name="scheduleId" class="px-3.5 py-2 border border-slate-300 rounded-xl text-xs font-bold bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
             <% schedules.forEach(s => { %>
             <option value="<%= s.id %>" <%= activeSchedule && activeSchedule.id === s.id ? 'selected' : '' %>>
               <%= s.class.namaKelas %> - <%= s.subject.namaMapel %> (<%= s.hari %>)
@@ -25,15 +25,15 @@
         </div>
 
         <div>
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Bulan & Tahun</label>
-          <input type="month" name="month" value="<%= selectedMonth %>" class="px-3.5 py-2 border border-slate-300 rounded-xl text-xs font-semibold bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Bulan & Tahun</label>
+          <input type="month" name="month" value="<%= selectedMonth %>" class="px-3.5 py-2 border border-slate-300 rounded-xl text-xs font-bold bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
         </div>
 
-        <div class="flex items-end space-x-2 pt-4 md:pt-0">
-          <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl transition">
+        <div class="flex items-end space-x-2 pt-2 lg:pt-0">
+          <button type="submit" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition">
             <i class="fa-solid fa-filter mr-1"></i> Tampilkan
           </button>
-          <button type="button" onclick="window.print()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl transition shadow-sm">
+          <button type="button" onclick="window.print()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition shadow-xs">
             <i class="fa-solid fa-print mr-1"></i> Cetak Laporan (PDF/Print)
           </button>
         </div>
@@ -41,17 +41,17 @@
     </div>
 
     <!-- Official Report Document Paper -->
-    <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+    <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs space-y-6">
       <!-- Kop Surat Resmi Sekolah -->
       <div class="border-b-2 border-slate-900 pb-4 text-center relative">
-        <h2 class="text-xl font-bold uppercase tracking-wide text-slate-900">SMK NEGERI UTAMA TEKNOLOGI</h2>
-        <h3 class="text-sm font-semibold uppercase text-slate-700">REKAPITULASI PRESENSI SISWA & JURNAL KELAS</h3>
-        <p class="text-xs text-slate-500 mt-1">Jl. Pendidikan No. 100, Kota Edukasi • Telp: (021) 555-0199 • Website: smk-utama.sch.id</p>
+        <h2 class="text-lg sm:text-xl font-extrabold uppercase tracking-wide text-slate-900">SMK NEGERI UTAMA TEKNOLOGI</h2>
+        <h3 class="text-xs sm:text-sm font-bold uppercase text-slate-700">REKAPITULASI PRESENSI SISWA & JURNAL KELAS</h3>
+        <p class="text-[11px] text-slate-500 mt-1">Jl. Pendidikan No. 100, Kota Edukasi • Telp: (021) 555-0199 • Website: smk-utama.sch.id</p>
       </div>
 
       <!-- Report Metadata -->
       <% if (activeSchedule) { %>
-      <div class="grid grid-cols-2 text-xs font-medium text-slate-700 gap-2 border border-slate-200 p-4 rounded-xl bg-slate-50/50">
+      <div class="grid grid-cols-1 sm:grid-cols-2 text-xs font-medium text-slate-700 gap-3 border border-slate-200 p-4 rounded-xl bg-slate-50/50">
         <div>
           <p><span class="text-slate-500">Rombongan Belajar:</span> <strong class="text-slate-900"><%= activeSchedule.class.namaKelas %></strong></p>
           <p><span class="text-slate-500">Mata Pelajaran:</span> <strong class="text-slate-900"><%= activeSchedule.subject.namaMapel %> (<%= activeSchedule.subject.kodeMapel %>)</strong></p>
@@ -68,15 +68,15 @@
         <table class="w-full text-left text-xs text-slate-800 border border-slate-300">
           <thead class="bg-slate-100 text-slate-700 font-bold uppercase border-b border-slate-300">
             <tr>
-              <th class="p-3 border border-slate-300 text-center w-12">No</th>
-              <th class="p-3 border border-slate-300">NISN</th>
-              <th class="p-3 border border-slate-300">Nama Siswa</th>
-              <th class="p-3 border border-slate-300 text-center bg-emerald-50 text-emerald-800">Hadir (H)</th>
-              <th class="p-3 border border-slate-300 text-center bg-amber-50 text-amber-800">Sakit (S)</th>
-              <th class="p-3 border border-slate-300 text-center bg-blue-50 text-blue-800">Izin (I)</th>
-              <th class="p-3 border border-slate-300 text-center bg-rose-50 text-rose-800">Alpa (A)</th>
-              <th class="p-3 border border-slate-300 text-center">Total Pertemuan</th>
-              <th class="p-3 border border-slate-300 text-center font-bold">Persentase Kehadiran</th>
+              <th class="p-3 border border-slate-300 text-center w-12 whitespace-nowrap">No</th>
+              <th class="p-3 border border-slate-300 whitespace-nowrap">NISN</th>
+              <th class="p-3 border border-slate-300 whitespace-nowrap">Nama Siswa</th>
+              <th class="p-3 border border-slate-300 text-center bg-emerald-50 text-emerald-800 whitespace-nowrap">Hadir (H)</th>
+              <th class="p-3 border border-slate-300 text-center bg-amber-50 text-amber-800 whitespace-nowrap">Sakit (S)</th>
+              <th class="p-3 border border-slate-300 text-center bg-blue-50 text-blue-800 whitespace-nowrap">Izin (I)</th>
+              <th class="p-3 border border-slate-300 text-center bg-rose-50 text-rose-800 whitespace-nowrap">Alpa (A)</th>
+              <th class="p-3 border border-slate-300 text-center whitespace-nowrap">Total Pertemuan</th>
+              <th class="p-3 border border-slate-300 text-center font-bold whitespace-nowrap">Persentase Kehadiran</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-200">
@@ -85,15 +85,15 @@
             <% } %>
             <% recapData.forEach((row, index) => { %>
             <tr class="hover:bg-slate-50">
-              <td class="p-2.5 border border-slate-300 text-center font-medium"><%= index + 1 %></td>
-              <td class="p-2.5 border border-slate-300 font-mono"><%= row.student.nisn || '-' %></td>
-              <td class="p-2.5 border border-slate-300 font-bold text-slate-900"><%= row.student.nama %></td>
-              <td class="p-2.5 border border-slate-300 text-center font-bold text-emerald-700"><%= row.hadir %></td>
-              <td class="p-2.5 border border-slate-300 text-center font-bold text-amber-700"><%= row.sakit %></td>
-              <td class="p-2.5 border border-slate-300 text-center font-bold text-blue-700"><%= row.izin %></td>
-              <td class="p-2.5 border border-slate-300 text-center font-bold text-rose-700"><%= row.alpa %></td>
-              <td class="p-2.5 border border-slate-300 text-center font-semibold"><%= row.total %> Sesi</td>
-              <td class="p-2.5 border border-slate-300 text-center font-bold">
+              <td class="p-2.5 border border-slate-300 text-center font-bold whitespace-nowrap"><%= index + 1 %></td>
+              <td class="p-2.5 border border-slate-300 font-mono whitespace-nowrap"><%= row.student.nisn || '-' %></td>
+              <td class="p-2.5 border border-slate-300 font-bold text-slate-900 whitespace-nowrap"><%= row.student.nama %></td>
+              <td class="p-2.5 border border-slate-300 text-center font-bold text-emerald-700 whitespace-nowrap"><%= row.hadir %></td>
+              <td class="p-2.5 border border-slate-300 text-center font-bold text-amber-700 whitespace-nowrap"><%= row.sakit %></td>
+              <td class="p-2.5 border border-slate-300 text-center font-bold text-blue-700 whitespace-nowrap"><%= row.izin %></td>
+              <td class="p-2.5 border border-slate-300 text-center font-bold text-rose-700 whitespace-nowrap"><%= row.alpa %></td>
+              <td class="p-2.5 border border-slate-300 text-center font-semibold whitespace-nowrap"><%= row.total %> Sesi</td>
+              <td class="p-2.5 border border-slate-300 text-center font-bold whitespace-nowrap">
                 <span class="<%= row.percentage < 75 ? 'text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200' : 'text-emerald-700' %>">
                   <%= row.percentage %>%
                 </span>
