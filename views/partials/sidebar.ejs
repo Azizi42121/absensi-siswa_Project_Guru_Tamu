@@ -1,0 +1,76 @@
+<aside class="no-print w-64 bg-white border-r border-slate-200 flex-shrink-0 min-h-[calc(100vh-65px)] p-4 flex flex-col justify-between">
+  <div class="space-y-6">
+
+    <% if (user && user.role === 'ADMIN') { %>
+    <div>
+      <div class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Menu Utilitas Admin</div>
+      <nav class="space-y-1">
+        <a href="/admin/dashboard" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-chart-line w-6 text-indigo-500"></i> Dashboard Real-Time
+        </a>
+        <a href="/admin/classes" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-school w-6 text-indigo-500"></i> Data Kelas
+        </a>
+        <a href="/admin/students" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-users w-6 text-indigo-500"></i> Data Siswa
+        </a>
+        <a href="/admin/teachers" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-user-tie w-6 text-indigo-500"></i> Data Guru Mapel
+        </a>
+        <a href="/admin/subjects" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-book-open w-6 text-indigo-500"></i> Mata Pelajaran
+        </a>
+        <a href="/admin/schedules" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-regular fa-calendar-days w-6 text-indigo-500"></i> Jadwal Mengajar
+        </a>
+        <a href="/admin/audit" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-file-shield w-6 text-indigo-500"></i> Log Audit Presensi
+        </a>
+      </nav>
+    </div>
+    <% } %>
+
+    <% if (user && user.role === 'GURU_MAPEL') { %>
+    <div>
+      <div class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Menu Guru Pengajar</div>
+      <nav class="space-y-1">
+        <a href="/guru/dashboard" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-house w-6 text-indigo-500"></i> Dashboard Guru
+        </a>
+        <a href="/guru/verify-notes" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-file-signature w-6 text-amber-500"></i> Verifikasi Surat Sakit/Izin
+        </a>
+        <a href="/guru/monthly-recap" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-print w-6 text-emerald-500"></i> Cetak Rekap Bulanan
+        </a>
+      </nav>
+    </div>
+    <% } %>
+
+    <% if (user && user.role === 'SISWA') { %>
+    <div>
+      <div class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Menu Siswa / Orang Tua</div>
+      <nav class="space-y-1">
+        <a href="/siswa/dashboard" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-chart-pie w-6 text-indigo-500"></i> Dashboard Kehadiran
+        </a>
+        <a href="/siswa/personal-recap" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-list-check w-6 text-indigo-500"></i> Rekapitulasi Presensi
+        </a>
+        <a href="/siswa/upload-note" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+          <i class="fa-solid fa-cloud-arrow-up w-6 text-indigo-500"></i> Upload Surat Dokter/Izin
+        </a>
+      </nav>
+    </div>
+    <% } %>
+
+  </div>
+
+  <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+    <div class="flex items-center space-x-2 text-indigo-800 text-xs font-semibold mb-1">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span>Sistem Terverifikasi</span>
+    </div>
+    <p class="text-[11px] text-indigo-600">Presensi Harian & Jurnal Mengajar Terintegrasi UKK 2026.</p>
+  </div>
+</aside>

@@ -1,0 +1,126 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<div class="flex-1 flex">
+  <%- include('../partials/sidebar') %>
+
+  <main class="flex-1 p-8 space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Dashboard Monitoring Sekolah</h1>
+        <p class="text-xs text-slate-500 mt-1">Audit Statistik Kehadiran Real-time & Master Control Kurikulum / IT</p>
+      </div>
+      <div class="inline-flex items-center space-x-2 bg-indigo-50 border border-indigo-200 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-indigo-700">
+        <i class="fa-solid fa-clock text-indigo-500"></i>
+        <span>Status Sistem: Aktif & Terhubung</span>
+      </div>
+    </div>
+
+    <!-- Stats Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Siswa Active</p>
+          <h3 class="text-2xl font-bold text-slate-800 mt-1"><%= stats.totalStudents %></h3>
+          <p class="text-xs text-slate-500 mt-1"><%= stats.totalClasses %> Rombongan Belajar</p>
+        </div>
+        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-user-graduate"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Guru Mapel</p>
+          <h3 class="text-2xl font-bold text-slate-800 mt-1"><%= stats.totalTeachers %></h3>
+          <p class="text-xs text-slate-500 mt-1"><%= stats.totalSubjects %> Mata Pelajaran</p>
+        </div>
+        <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-chalkboard-user"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Presensi Terisi Hari Ini</p>
+          <h3 class="text-2xl font-bold text-slate-800 mt-1"><%= stats.totalTodayRecs %></h3>
+          <p class="text-xs text-emerald-600 font-semibold mt-1"><%= stats.countHadir %> Hadir Terverifikasi</p>
+        </div>
+        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-check-double"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Persentase Kehadiran Hari Ini</p>
+          <h3 class="text-2xl font-bold text-slate-800 mt-1"><%= stats.hadirPercentage %>%</h3>
+          <p class="text-xs text-slate-500 mt-1">Sakit: <%= stats.countSakit %> | Izin: <%= stats.countIzin %> | Alpa: <%= stats.countAlpa %></p>
+        </div>
+        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-chart-pie"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Real-time Activity Audit Section -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800">Aktivitas Pengisian Jurnal Mengajar Terbaru</h2>
+          <p class="text-xs text-slate-500">Monitoring real-time aktivitas guru pengajar di kelas</p>
+        </div>
+        <a href="/admin/audit" class="px-3.5 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-xs font-semibold rounded-lg transition">
+          Lihat Seluruh Log Audit <i class="fa-solid fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-600">
+          <thead class="bg-slate-50 text-xs uppercase text-slate-400 font-semibold border-b border-slate-100">
+            <tr>
+              <th class="px-6 py-3.5">Tanggal</th>
+              <th class="px-6 py-3.5">Guru Pengajar</th>
+              <th class="px-6 py-3.5">Kelas & Mapel</th>
+              <th class="px-6 py-3.5">Materi Ajar</th>
+              <th class="px-6 py-3.5 text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <% if (recentJournals.length === 0) { %>
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-slate-400 text-xs">Belum ada jurnal mengajar yang diinput.</td>
+            </tr>
+            <% } %>
+            <% recentJournals.forEach(j => { %>
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-500 font-medium">
+                <%= new Date(j.tanggal).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' }) %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-800">
+                <%= j.schedule.teacher.nama %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 mr-2">
+                  <%= j.schedule.class.namaKelas %>
+                </span>
+                <span class="text-xs text-slate-600"><%= j.schedule.subject.namaMapel %></span>
+              </td>
+              <td class="px-6 py-4 text-slate-700 max-w-xs truncate">
+                <%= j.materiAjar %>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                  <i class="fa-solid fa-circle-check text-[10px] mr-1"></i> Terverifikasi
+                </span>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<%- include('../partials/footer') %>

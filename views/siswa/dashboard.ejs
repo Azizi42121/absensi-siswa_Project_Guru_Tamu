@@ -1,0 +1,205 @@
+<%- include('../partials/header') %>
+  <%- include('../partials/navbar') %>
+
+    <div class="flex-1 flex">
+      <%- include('../partials/sidebar') %>
+
+        <main class="flex-1 p-8 space-y-8">
+          <!-- Header Siswa -->
+          <div
+            class="bg-gradient-to-r from-emerald-800 to-teal-700 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="space-y-2">
+              <div
+                class="inline-flex items-center px-3 py-1 bg-emerald-900/60 rounded-full text-xs font-semibold text-emerald-200">
+                <i class="fa-solid fa-user-graduate mr-1.5"></i> Portal Siswa / Wali Murid
+              </div>
+              <h1 class="text-2xl font-bold">Halo, <%= user.nama %>
+              </h1>
+              <p class="text-xs text-emerald-100">
+                NISN: <span class="font-mono font-semibold">
+                  <%= user.nisn || '-' %>
+                </span> |
+                Kelas: <span class="font-semibold">
+                  <%= user.namaKelas || 'Siswa' %>
+                </span>
+              </p>
+            </div>
+
+            <a href="/siswa/upload-note"
+              class="bg-white hover:bg-emerald-50 text-emerald-800 px-4 py-3 rounded-xl shadow-md text-xs font-bold flex items-center space-x-2 transition transform hover:scale-105">
+              <i class="fa-solid fa-cloud-arrow-up text-lg text-emerald-600"></i>
+              <span>Upload Surat Dokter / Izin</span>
+            </a>
+          </div>
+
+          <!-- Peringatan Otomatis Jika Kehadiran di Bawah Standar (<75%) -->
+          <% if (overallWarning) { %>
+            <div
+              class="bg-rose-500/10 border-2 border-rose-500/30 p-5 rounded-2xl flex items-start space-x-4 animate-pulse">
+              <div
+                class="w-12 h-12 bg-rose-500 text-white rounded-xl flex items-center justify-center flex-shrink-0 text-xl font-bold shadow-md">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-rose-700">PERINGATAN KRITIS: KEHADIRAN DI BAWAH STANDAR (&lt;75%)</h3>
+                    <p class="text-xs text-rose-600 mt-1 leading-relaxed">
+                      Persentase akumulasi kehadiran Anda saat ini adalah <strong>
+                        <%= overallPercentage %>%
+                      </strong>. Batas minimum persentase kehadiran sekolah untuk mengikuti Ujian Akhir / Evaluasi
+                      Semester adalah <strong>75%</strong>. Mohon segera melengkapi surat keterangan dokter/izin jika
+                      Anda berhalangan hadir.
+                    </p>
+              </div>
+            </div>
+            <% } %>
+
+              <!-- Per Subject Attendance Cards -->
+              <div class="space-y-4">
+                <h2 class="text-lg font-bold text-slate-800">Rekapitulasi Kehadiran per Mata Pelajaran</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <% if (subjectStats.length===0) { %>
+                    <div
+                      class="col-span-full bg-white p-8 rounded-2xl border border-slate-200 text-center text-slate-400 text-sm">
+                      Belum ada jadwal mata pelajaran terdaftar untuk kelas Anda.
+                    </div>
+                    <% } %>
+                      <% subjectStats.forEach(st=> { %>
+                        <div
+                          class="bg-white rounded-2xl border <%= st.isWarning ? 'border-rose-300 ring-2 ring-rose-200' : 'border-slate-200' %> p-6 shadow-sm space-y-4 relative">
+
+                          <% if (st.isWarning) { %>
+                            <span
+                              class="absolute top-3 right-3 px-2.5 py-0.5 bg-rose-100 text-rose-700 font-bold text-[10px] rounded-full border border-rose-300">
+                              <i class="fa-solid fa-triangle-exclamation mr-1"></i> &lt; 75%
+                            </span>
+                            <% } %>
+
+                              <div>
+                                <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider block mb-1">
+                                  <%= st.schedule.subject.kodeMapel %>
+                                </span>
+                                <h3 class="font-bold text-slate-800 text-base leading-tight">
+                                  <%= st.schedule.subject.namaMapel %>
+                                </h3>
+                                <p class="text-xs text-slate-500 mt-1">Guru: <%= st.schedule.teacher.nama %>
+                                </p>
+                              </div>
+
+                              <div
+                                class="grid grid-cols-4 gap-2 text-center text-xs py-2 bg-slate-50 rounded-xl border border-slate-100">
+                                <div>
+                                  <span class="block font-bold text-emerald-600">
+                                    <%= st.hadir %>
+                                  </span>
+                                  <span class="text-[10px] text-slate-400">Hadir</span>
+                                </div>
+                                <div>
+                                  <span class="block font-bold text-amber-600">
+                                    <%= st.sakit %>
+                                  </span>
+                                  <span class="text-[10px] text-slate-400">Sakit</span>
+                                </div>
+                                <div>
+                                  <span class="block font-bold text-blue-600">
+                                    <%= st.izin %>
+                                  </span>
+                                  <span class="text-[10px] text-slate-400">Izin</span>
+                                </div>
+                                <div>
+                                  <span class="block font-bold text-rose-600">
+                                    <%= st.alpa %>
+                                  </span>
+                                  <span class="text-[10px] text-slate-400">Alpa</span>
+                                </div>
+                              </div>
+
+                              <div class="flex items-center justify-between pt-2">
+                                <span class="text-xs text-slate-500 font-medium">Tingkat Kehadiran:</span>
+                                <span
+                                  class="font-bold text-sm <%= st.isWarning ? 'text-rose-600' : 'text-emerald-600' %>">
+                                  <%= st.percentage %>%
+                                </span>
+                              </div>
+
+                              <!-- Progress Bar -->
+                              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full <%= st.isWarning ? 'bg-rose-500' : 'bg-emerald-500' %>"
+                                  style="width: <%= st.percentage + '%' %>;"></div>
+                              </div>
+                        </div>
+                        <% }) %>
+                </div>
+              </div>
+
+              <!-- Recent Attendance Logs -->
+              <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-slate-100 font-bold text-slate-800 flex items-center justify-between">
+                  <span>Riwayat Presensi Terbaru Anda</span>
+                  <a href="/siswa/personal-recap" class="text-xs text-indigo-600 hover:underline font-semibold">Lihat
+                    Seluruh Riwayat &rarr;</a>
+                </div>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 text-xs uppercase text-slate-400 font-semibold border-b border-slate-100">
+                      <tr>
+                        <th class="px-6 py-3">Tanggal</th>
+                        <th class="px-6 py-3">Mata Pelajaran</th>
+                        <th class="px-6 py-3">Guru Pengajar</th>
+                        <th class="px-6 py-3 text-center">Status</th>
+                        <th class="px-6 py-3">Surat Bukti</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                      <% if (recentAttendances.length===0) { %>
+                        <tr>
+                          <td colspan="5" class="px-6 py-6 text-center text-xs text-slate-400">Belum ada catatan
+                            presensi.</td>
+                        </tr>
+                        <% } %>
+                          <% recentAttendances.forEach(att=> { %>
+                            <tr class="hover:bg-slate-50">
+                              <td class="px-6 py-3.5 text-xs font-semibold text-slate-700">
+                                <%= new Date(att.tanggal).toLocaleDateString('id-ID', { day: 'numeric' , month: 'short'
+                                  , year: 'numeric' }) %>
+                              </td>
+                              <td class="px-6 py-3.5 font-bold text-slate-800">
+                                <%= att.schedule.subject.namaMapel %>
+                              </td>
+                              <td class="px-6 py-3.5 text-xs text-slate-600">
+                                <%= att.schedule.teacher.nama %>
+                              </td>
+                              <td class="px-6 py-3.5 text-center">
+                                <% if (att.status==='HADIR' ) { %>
+                                  <span
+                                    class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold">Hadir</span>
+                                  <% } else if (att.status==='SAKIT' ) { %>
+                                    <span
+                                      class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Sakit</span>
+                                    <% } else if (att.status==='IZIN' ) { %>
+                                      <span
+                                        class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold">Izin</span>
+                                      <% } else { %>
+                                        <span
+                                          class="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full text-xs font-bold">Alpa</span>
+                                        <% } %>
+                              </td>
+                              <td class="px-6 py-3.5 text-xs">
+                                <% if (att.suratBuktiUrl) { %>
+                                  <a href="<%= att.suratBuktiUrl %>" target="_blank"
+                                    class="text-indigo-600 font-semibold underline">Lihat File</a>
+                                  <% } else { %>
+                                    <span class="text-slate-400">-</span>
+                                    <% } %>
+                              </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+        </main>
+    </div>
+
+    <%- include('../partials/footer') %>

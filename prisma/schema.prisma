@@ -1,0 +1,119 @@
+// Prisma Schema for Sistem Manajemen Absensi Siswa & Guru
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum Role {
+  ADMIN
+  GURU_MAPEL
+  SISWA
+}
+
+enum StatusAbsen {
+  HADIR
+  SAKIT
+  IZIN
+  ALPA
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  nama      String
+  role      Role     @default(SISWA)
+  nisn      String?  @unique
+  
+  // Relation for Siswa belonging to a Class
+  classId   Int?
+  class     Class?   @relation("ClassStudents", fields: [classId], references: [id], onDelete: SetNull)
+
+  // Relation for Guru teaching Schedules
+  teacherSchedules Schedule[] @relation("TeacherSchedules")
+
+  // Relation for Siswa Attendance records
+  studentAttendances Attendance[] @relation("StudentAttendances")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Class {
+  id        Int      @id @default(autoincrement())
+  namaKelas String
+  tingkat   String   // e.g. "X", "XI", "XII"
+
+  students  User[]     @relation("ClassStudents")
+  schedules Schedule[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subject {
+  id        Int      @id @default(autoincrement())
+  namaMapel String
+  kodeMapel String   @unique
+
+  schedules Schedule[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Schedule {
+  id        Int      @id @default(autoincrement())
+  classId   Int
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  
+  subjectId Int
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  teacherId Int
+  teacher   User     @relation("TeacherSchedules", fields: [teacherId], references: [id], onDelete: Cascade)
+
+  hari      String   // "Senin", "Selasa", etc.
+  jamKe     String   // e.g. "07.00 - 08.30 (Jam 1-2)"
+
+  attendances Attendance[]
+  journals    TeachingJournal[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Attendance {
+  id                Int         @id @default(autoincrement())
+  scheduleId        Int
+  schedule          Schedule    @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  studentId         Int
+  student           User        @relation("StudentAttendances", fields: [studentId], references: [id], onDelete: Cascade)
+
+  tanggal           DateTime    @default(now())
+  status            StatusAbsen @default(HADIR)
+  suratBuktiUrl     String?
+  verifiedByTeacher Boolean     @default(false)
+  keterangan        String?
+
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model TeachingJournal {
+  id           Int      @id @default(autoincrement())
+  scheduleId   Int
+  schedule     Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  tanggal      DateTime @default(now())
+  materiAjar   String
+  catatanKelas String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

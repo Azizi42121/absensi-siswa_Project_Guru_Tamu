@@ -1,0 +1,117 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<div class="flex-1 flex">
+  <%- include('../partials/sidebar') %>
+
+  <main class="flex-1 p-8 space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Manajemen Jadwal Pelajaran</h1>
+        <p class="text-xs text-slate-500 mt-1">Alokasikan guru mapel, kelas, hari, dan jam mengajar</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Form Create Schedule -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-fit">
+        <h2 class="text-base font-bold text-slate-800 mb-4 flex items-center">
+          <i class="fa-solid fa-calendar-plus text-indigo-600 mr-2"></i> Tambah Jadwal Baru
+        </h2>
+        <form action="/admin/schedules" method="POST" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Kelas Target</label>
+            <select name="classId" required class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+              <option value="">-- Pilih Kelas --</option>
+              <% classes.forEach(c => { %>
+              <option value="<%= c.id %>"><%= c.namaKelas %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Mata Pelajaran</label>
+            <select name="subjectId" required class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+              <option value="">-- Pilih Mapel --</option>
+              <% subjects.forEach(s => { %>
+              <option value="<%= s.id %>"><%= s.kodeMapel %> - <%= s.namaMapel %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Guru Pengajar</label>
+            <select name="teacherId" required class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+              <option value="">-- Pilih Guru --</option>
+              <% teachers.forEach(t => { %>
+              <option value="<%= t.id %>"><%= t.nama %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Hari Pelajaran</label>
+            <select name="hari" required class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+              <option value="Senin">Senin</option>
+              <option value="Selasa">Selasa</option>
+              <option value="Rabu">Rabu</option>
+              <option value="Kamis">Kamis</option>
+              <option value="Jumat">Jumat</option>
+              <option value="Sabtu">Sabtu</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Jam Mengajar</label>
+            <input type="text" name="jamKe" placeholder="misal: 07.00 - 09.15 (Jam 1-3)" required
+              class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+          <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition">
+            Simpan Alokasi Jadwal
+          </button>
+        </form>
+      </div>
+
+      <!-- Schedule Table -->
+      <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 font-bold text-slate-800">
+          Alokasi Jadwal Pelajaran Terpasang (<%= schedules.length %>)
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-xs uppercase text-slate-400 font-semibold border-b border-slate-100">
+              <tr>
+                <th class="px-6 py-3">Hari & Jam</th>
+                <th class="px-6 py-3">Kelas</th>
+                <th class="px-6 py-3">Mata Pelajaran</th>
+                <th class="px-6 py-3">Guru Pengajar</th>
+                <th class="px-6 py-3 text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <% if (schedules.length === 0) { %>
+              <tr><td colspan="5" class="px-6 py-6 text-center text-xs text-slate-400">Belum ada jadwal terpasang.</td></tr>
+              <% } %>
+              <% schedules.forEach(sch => { %>
+              <tr class="hover:bg-slate-50">
+                <td class="px-6 py-3.5">
+                  <span class="font-bold text-slate-800 block"><%= sch.hari %></span>
+                  <span class="text-xs text-slate-500"><%= sch.jamKe %></span>
+                </td>
+                <td class="px-6 py-3.5 font-semibold text-slate-800"><%= sch.class.namaKelas %></td>
+                <td class="px-6 py-3.5"><%= sch.subject.namaMapel %></td>
+                <td class="px-6 py-3.5 font-medium text-slate-700"><%= sch.teacher.nama %></td>
+                <td class="px-6 py-3.5 text-right">
+                  <form action="/admin/schedules/delete/<%= sch.id %>" method="POST" onsubmit="return confirm('Hapus jadwal ini?');">
+                    <button type="submit" class="text-rose-600 hover:text-rose-800 font-medium text-xs">
+                      <i class="fa-solid fa-trash mr-1"></i> Hapus
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<%- include('../partials/footer') %>

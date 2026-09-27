@@ -1,0 +1,133 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<div class="flex-1 flex">
+  <%- include('../partials/sidebar') %>
+
+  <main class="flex-1 p-8 space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Presensi Siswa per Sesi Mengajar</h1>
+        <p class="text-xs text-slate-500 mt-1">
+          Kelas: <span class="font-bold text-slate-700"><%= schedule.class.namaKelas %></span> | 
+          Mapel: <span class="font-bold text-slate-700"><%= schedule.subject.namaMapel %></span> | 
+          Jadwal: <span class="font-bold text-slate-700"><%= schedule.hari %>, <%= schedule.jamKe %></span>
+        </p>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <form action="/guru/attendance/<%= schedule.id %>" method="GET" class="flex items-center space-x-2">
+          <input type="date" name="tanggal" value="<%= selectedDate %>" onchange="this.form.submit()"
+            class="px-3.5 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+        </form>
+        <a href="/guru/dashboard" class="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl transition">
+          <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+        </a>
+      </div>
+    </div>
+
+    <!-- Attendance Form -->
+    <form action="/guru/attendance/<%= schedule.id %>" method="POST" class="space-y-8">
+      <input type="hidden" name="tanggal" value="<%= selectedDate %>">
+
+      <!-- Teaching Journal Section -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <h2 class="text-base font-bold text-slate-800 flex items-center">
+          <i class="fa-solid fa-book-journal-whills text-indigo-600 mr-2"></i> Jurnal Materi Pelajaran & Agenda Kelas
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Materi Pelajaran / Standar Kompetensi *</label>
+            <input type="text" name="materiAjar" required value="<%= existingJournal ? existingJournal.materiAjar : '' %>"
+              placeholder="misal: Pembuatan REST API dengan Express.js & SQLite"
+              class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Catatan Kejadian / Agenda Kelas</label>
+            <input type="text" name="catatanKelas" value="<%= existingJournal ? (existingJournal.catatanKelas || '') : '' %>"
+              placeholder="misal: Kelas berlangsung tertib, 2 siswa belum mengumpulkan tugas minggu lalu."
+              class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+        </div>
+      </div>
+
+      <!-- Student Attendance Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+          <h2 class="font-bold text-slate-800">Daftar Presensi Siswa (<%= students.length %> Siswa)</h2>
+          <div class="text-xs text-slate-500">
+            Pilih status: <span class="font-semibold text-emerald-600">H = Hadir</span>, <span class="font-semibold text-amber-600">S = Sakit</span>, <span class="font-semibold text-blue-600">I = Izin</span>, <span class="font-semibold text-rose-600">A = Alpa</span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-xs uppercase text-slate-400 font-semibold border-b border-slate-100">
+              <tr>
+                <th class="px-6 py-3.5">No</th>
+                <th class="px-6 py-3.5">Nama Siswa</th>
+                <th class="px-6 py-3.5">NISN</th>
+                <th class="px-6 py-3.5 text-center">Status Presensi</th>
+                <th class="px-6 py-3.5">Surat Dokter / Izin</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <% if (students.length === 0) { %>
+              <tr><td colspan="5" class="px-6 py-8 text-center text-xs text-slate-400">Tidak ada siswa terdaftar di kelas ini.</td></tr>
+              <% } %>
+              <% students.forEach((st, index) => { 
+                const currentAtt = attendanceMap[st.id];
+                const currentStatus = currentAtt ? currentAtt.status : 'HADIR';
+              %>
+              <tr class="hover:bg-slate-50">
+                <td class="px-6 py-4 text-xs font-semibold text-slate-400"><%= index + 1 %></td>
+                <td class="px-6 py-4 font-bold text-slate-800"><%= st.nama %></td>
+                <td class="px-6 py-4 text-xs font-mono text-slate-500"><%= st.nisn || '-' %></td>
+                <td class="px-6 py-4 text-center">
+                  <div class="inline-flex items-center space-x-3 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                    <label class="cursor-pointer px-2.5 py-1 rounded-lg text-xs font-bold transition <%= currentStatus === 'HADIR' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-200' %>">
+                      <input type="radio" name="attendanceData[<%= st.id %>]" value="HADIR" <%= currentStatus === 'HADIR' ? 'checked' : '' %> class="sr-only"> Hadir
+                    </label>
+                    <label class="cursor-pointer px-2.5 py-1 rounded-lg text-xs font-bold transition <%= currentStatus === 'SAKIT' ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-200' %>">
+                      <input type="radio" name="attendanceData[<%= st.id %>]" value="SAKIT" <%= currentStatus === 'SAKIT' ? 'checked' : '' %> class="sr-only"> Sakit
+                    </label>
+                    <label class="cursor-pointer px-2.5 py-1 rounded-lg text-xs font-bold transition <%= currentStatus === 'IZIN' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-200' %>">
+                      <input type="radio" name="attendanceData[<%= st.id %>]" value="IZIN" <%= currentStatus === 'IZIN' ? 'checked' : '' %> class="sr-only"> Izin
+                    </label>
+                    <label class="cursor-pointer px-2.5 py-1 rounded-lg text-xs font-bold transition <%= currentStatus === 'ALPA' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-200' %>">
+                      <input type="radio" name="attendanceData[<%= st.id %>]" value="ALPA" <%= currentStatus === 'ALPA' ? 'checked' : '' %> class="sr-only"> Alpa
+                    </label>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-xs">
+                  <% if (currentAtt && currentAtt.suratBuktiUrl) { %>
+                    <a href="<%= currentAtt.suratBuktiUrl %>" target="_blank" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-semibold underline">
+                      <i class="fa-solid fa-paperclip mr-1"></i> Lihat Surat
+                    </a>
+                    <% if (currentAtt.verifiedByTeacher) { %>
+                      <span class="ml-2 text-emerald-600 font-bold">(Terverifikasi)</span>
+                    <% } else { %>
+                      <span class="ml-2 text-amber-600 font-bold">(Belum Verifikasi)</span>
+                    <% } %>
+                  <% } else { %>
+                    <span class="text-slate-400 italic">Tidak ada surat</span>
+                  <% } %>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-5 border-t border-slate-100 flex items-center justify-end">
+          <button type="submit" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center space-x-2">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Simpan Presensi & Jurnal</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </main>
+</div>
+
+<%- include('../partials/footer') %>

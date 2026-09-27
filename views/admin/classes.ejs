@@ -1,0 +1,88 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<div class="flex-1 flex">
+  <%- include('../partials/sidebar') %>
+
+  <main class="flex-1 p-8 space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Manajemen Data Kelas</h1>
+        <p class="text-xs text-slate-500 mt-1">Kelola rombongan belajar dan tingkat kelas sekolah</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Form Create Class -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-fit">
+        <h2 class="text-base font-bold text-slate-800 mb-4 flex items-center">
+          <i class="fa-solid fa-plus-circle text-indigo-600 mr-2"></i> Tambah Kelas Baru
+        </h2>
+        <form action="/admin/classes" method="POST" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nama Kelas</label>
+            <input type="text" name="namaKelas" placeholder="misal: X RPL 1" required
+              class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Tingkat Kelas</label>
+            <select name="tingkat" required class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+              <option value="X">Tingkat X (10)</option>
+              <option value="XI">Tingkat XI (11)</option>
+              <option value="XII">Tingkat XII (12)</option>
+            </select>
+          </div>
+          <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition">
+            Simpan Kelas
+          </button>
+        </form>
+      </div>
+
+      <!-- Class Table -->
+      <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 font-bold text-slate-800">
+          Daftar Rombongan Belajar (<%= classes.length %>)
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-xs uppercase text-slate-400 font-semibold border-b border-slate-100">
+              <tr>
+                <th class="px-6 py-3">Nama Kelas</th>
+                <th class="px-6 py-3">Tingkat</th>
+                <th class="px-6 py-3">Jumlah Siswa</th>
+                <th class="px-6 py-3">Jadwal Pelajaran</th>
+                <th class="px-6 py-3 text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <% if (classes.length === 0) { %>
+              <tr><td colspan="5" class="px-6 py-6 text-center text-xs text-slate-400">Belum ada data kelas.</td></tr>
+              <% } %>
+              <% classes.forEach(c => { %>
+              <tr class="hover:bg-slate-50">
+                <td class="px-6 py-3.5 font-bold text-slate-800"><%= c.namaKelas %></td>
+                <td class="px-6 py-3.5">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+                    Kelas <%= c.tingkat %>
+                  </span>
+                </td>
+                <td class="px-6 py-3.5"><%= c._count.students %> Siswa</td>
+                <td class="px-6 py-3.5"><%= c._count.schedules %> Jadwal</td>
+                <td class="px-6 py-3.5 text-right">
+                  <form action="/admin/classes/delete/<%= c.id %>" method="POST" onsubmit="return confirm('Hapus kelas ini?');">
+                    <button type="submit" class="text-rose-600 hover:text-rose-800 font-medium text-xs">
+                      <i class="fa-solid fa-trash mr-1"></i> Hapus
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<%- include('../partials/footer') %>

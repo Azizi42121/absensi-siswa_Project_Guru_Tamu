@@ -1,0 +1,87 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<div class="flex-1 flex">
+  <%- include('../partials/sidebar') %>
+
+  <main class="flex-1 p-8 space-y-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Upload Surat Dokter / Izin Orang Tua</h1>
+        <p class="text-xs text-slate-500 mt-1">Unggah berkas bukti sakit atau izin resmi untuk diverifikasi oleh guru mapel</p>
+      </div>
+      <a href="/siswa/dashboard" class="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl transition">
+        <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Dashboard
+      </a>
+    </div>
+
+    <div class="max-w-2xl bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+      <% if (success) { %>
+      <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl flex items-center space-x-3">
+        <i class="fa-solid fa-circle-check text-lg text-emerald-600"></i>
+        <div>
+          <h4 class="font-bold">Surat Keterangan Berhasil Diunggah!</h4>
+          <p class="mt-0.5">Surat Anda telah disimpan dan menunggu verifikasi dari Guru Mapel.</p>
+        </div>
+      </div>
+      <% } %>
+
+      <% if (error) { %>
+      <div class="p-4 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-xl flex items-center space-x-3">
+        <i class="fa-solid fa-circle-exclamation text-lg text-rose-600"></i>
+        <span><%= error %></span>
+      </div>
+      <% } %>
+
+      <form action="/siswa/upload-note" method="POST" enctype="multipart/form-data" class="space-y-5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Mata Pelajaran & Jam Mengajar *</label>
+          <select name="scheduleId" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+            <option value="">-- Pilih Mata Pelajaran --</option>
+            <% schedules.forEach(s => { %>
+            <option value="<%= s.id %>">
+              <%= s.subject.namaMapel %> (<%= s.teacher.nama %>) - <%= s.hari %> (<%= s.jamKe %>)
+            </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Tanggal Halangan *</label>
+            <input type="date" name="tanggal" required value="<%= new Date().toISOString().split('T')[0] %>"
+              class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Kategori Halangan *</label>
+            <select name="status" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+              <option value="SAKIT">SAKIT (Surat Dokter / Klinik)</option>
+              <option value="IZIN">IZIN (Surat Orang Tua / Wali)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">File Surat Keterangan (Dokumen/Foto) *</label>
+          <input type="file" name="suratBukti" accept=".jpg,.jpeg,.png,.pdf" required
+            class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+          <p class="text-[11px] text-slate-400 mt-1">Format yang diperbolehkan: JPG, PNG, atau PDF (Maksimal 5 MB).</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Alasan / Catatan Tambahan</label>
+          <textarea name="keterangan" rows="3" placeholder="misal: Demam tinggi sejak semalam dan berobat di Klinik Utama."
+            class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition shadow-md flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-paper-plane"></i>
+          <span>Kirim Dokumen Keterangan</span>
+        </button>
+      </form>
+    </div>
+  </main>
+</div>
+
+<%- include('../partials/footer') %>
